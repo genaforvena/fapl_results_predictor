@@ -3,10 +3,13 @@ import sys
 
 import NaiveBayes
 
+from sklearn import svm
+
 
 __author__ = 'imozerov'
 
-model = NaiveBayes.NaiveBayes()
+bayes = NaiveBayes.NaiveBayes()
+svm = svm.SVC()
 
 
 def get_team_names(csv_filename):
@@ -100,8 +103,10 @@ def train(filename):
                 if row2[0] == teamB and row2[2] == date:
                     teamB_data = row2
             data = teamA_data[4:] + teamB_data[4:]
-            model.add_instances({'attributes': dict(enumerate(data)), 'label': result[3], 'cases': 1})
-        model.train()
+            bayes.add_instances({'attributes': dict(enumerate(data)), 'label': result[3], 'cases': 1})
+            svm.add({'attributes': dict(enumerate(data)), 'label': result[3], 'cases': 1})
+        bayes.train()
+        svm.train()
 
 
 def predict(filename):
@@ -120,7 +125,8 @@ def predict(filename):
                     teamB_data = row2
             data = teamA_data[4:] + teamB_data[4:]
             try:
-                print(model.predict({'attributes': dict(enumerate(data))}))
+                print("bayes: " + bayes.predict({'attributes': dict(enumerate(data))}))
+                print("svm: " + svm.predict({'attributes': dict(enumerate(data))}))
                 print("actual: " + result[3])
             except:
                 pass
